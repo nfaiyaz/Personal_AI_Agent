@@ -25,3 +25,10 @@ class Base(DeclarativeBase):
 async def get_db():
     async with SessionLocal() as session:
         yield session
+
+
+async def init_db():
+    from app.db import models
+
+    async with engine.begin() as connection:
+        await connection.run_sync(Base.metadata.create_all)

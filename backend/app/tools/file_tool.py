@@ -48,3 +48,24 @@ def read_file(filename: str) -> str:
         raise ValueError("The requested path is not a file.")
 
     return path.read_text(encoding="utf-8")
+
+
+def search_files(query: str):
+    """
+    Search for files whose names contain the given query.
+    """
+
+    NOTES_DIR.mkdir(parents=True, exist_ok=True)
+
+    query = query.strip().lower()
+
+    if not query:
+        raise ValueError("Search query cannot be empty.")
+
+    results = []
+
+    for path in NOTES_DIR.iterdir():
+        if path.is_file() and query in path.name.lower():
+            results.append(path.name)
+
+    return sorted(results)

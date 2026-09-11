@@ -1,8 +1,24 @@
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from pathlib import Path
+
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.orm import DeclarativeBase
 
 
-DATABASE_URL = "sqlite+aiosqlite:///../../data/agent.db"
+# Project root directory
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+# SQLite database location
+DATABASE_PATH = PROJECT_ROOT / "data" / "agent.db"
+
+# Make sure the data directory exists
+DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+# SQLite connection URL
+DATABASE_URL = f"sqlite+aiosqlite:///{DATABASE_PATH}"
 
 
 engine = create_async_engine(

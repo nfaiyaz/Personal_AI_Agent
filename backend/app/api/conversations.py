@@ -1,11 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
 from app.memory.conversation import (
+    add_message,
     create_conversation,
     get_messages,
 )
+
+
+class MessageRequest(BaseModel):
+    role: str
+    content: str
 
 
 router = APIRouter(
@@ -28,6 +35,28 @@ async def create_new_conversation(
         "id": conversation.id,
         "title": conversation.title,
         "created_at": conversation.created_at,
+    }
+
+
+@router.post("/{conversation_id}/messages")
+async def save_conversation_message(
+    conversation_id: int,
+    message: MessageRequest,
+    session: AsyncSession = Depends(get_db),
+):
+    saved_message = await add_message(
+        session,
+        conversation_id,
+        message.role,
+        message.content,
+    )
+
+    return {
+        "id": saved_message.id,
+        "conversation_id": saved_message.conversation_id,
+        "role": saved_message.role,
+        "content": saved_message.content,
+        "created_at": saved_message.created_at,
     }
 
 

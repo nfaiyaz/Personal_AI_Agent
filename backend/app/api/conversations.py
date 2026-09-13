@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from typing import Literal
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
@@ -11,7 +12,7 @@ from app.memory.conversation import (
 
 
 class MessageRequest(BaseModel):
-    role: str
+    role: Literal["user", "assistant", "system"]
     content: str
 
 
